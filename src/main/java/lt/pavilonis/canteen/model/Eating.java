@@ -1,16 +1,15 @@
-package lt.pavilonis.scan.monpikas.client.model;
-
+package lt.pavilonis.canteen.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableMap;
-import lt.pavilonis.scan.monpikas.client.enumeration.EatingType;
+import lt.pavilonis.canteen.EatingType;
 
 import java.text.DecimalFormat;
 import java.util.Map;
 
 public final class Eating {
 
-   private static final Map<EatingType, String> translations = ImmutableMap.of(
+   //TODO Move out
+   private static final Map<EatingType, String> TRANSLATIONS = Map.of(
          EatingType.BREAKFAST, "Pusryčiai",
          EatingType.LUNCH, "Priešpiečiai",
          EatingType.DINNER, "Pietus",
@@ -23,11 +22,11 @@ public final class Eating {
    private final EatingType type;
    private final double price;
 
-   public Eating(
-         @JsonProperty("id") Long id,
-         @JsonProperty("name") String name,
-         @JsonProperty("type") EatingType type,
-         @JsonProperty("price") double price) {
+   public Eating(@JsonProperty("id") Long id,
+                 @JsonProperty("name") String name,
+                 @JsonProperty("type") EatingType type,
+                 @JsonProperty("price") double price) {
+
       this.id = id;
       this.name = name;
       this.type = type;
@@ -36,6 +35,6 @@ public final class Eating {
 
    @Override
    public String toString() {
-      return translations.get(type) + " " + new DecimalFormat("0.00").format(price);
+      return TRANSLATIONS.get(type) + " " + new DecimalFormat("0.00").format(price);
    }
 }

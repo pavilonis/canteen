@@ -1,4 +1,4 @@
-package lt.pavilonis.scan.monpikas.client.enumeration;
+package lt.pavilonis.canteen;
 
 public enum EatingType {
    BREAKFAST,

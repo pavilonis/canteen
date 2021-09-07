@@ -1,4 +1,4 @@
-package lt.pavilonis.scan.monpikas.client.model;
+package lt.pavilonis.canteen.model;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -15,36 +15,23 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import lt.pavilonis.canteen.Spring;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 import static java.lang.Runtime.getRuntime;
 import static javafx.geometry.VPos.CENTER;
-import static org.slf4j.LoggerFactory.getLogger;
 
-@Component
 public final class CardBig extends Card {
 
-   private static final Logger LOG = getLogger(CardBig.class.getSimpleName());
-
-   @Value("${audio.success}")
-   private String playSuccessSoundCmd;
-
-   @Value("${audio.systemError}")
-   private String playSysErrorSoundCmd;
-
-   @Value("${audio.error}")
-   private String playErrorSoundCmd;
-
-   @Value("${card.icon.statusOkContent}")
-   private String iconStatusOkContent;
-
-   @Value("${card.icon.statusRejectedContent}")
-   private String iconStatusRejectContent;
+   private static final Logger LOGGER = LoggerFactory.getLogger(CardBig.class);
+   private final String playSuccessSoundCmd = Spring.getStringProperty("audio.success");
+   private final String playErrorSoundCmd = Spring.getStringProperty("audio.error");
+   private final String iconStatusOkContent = Spring.getStringProperty("card.icon.statusOkContent");
+   private final String iconStatusRejectContent = Spring.getStringProperty("card.icon.statusRejectedContent");
 
    private final Text descriptionText = new Text();
    private final SVGPath iconStatusOk = new SVGPath();
@@ -144,7 +131,7 @@ public final class CardBig extends Card {
 
    @Override
    protected void log(String text) {
-      LOG.info(text);
+      LOGGER.info(text);
    }
 
    @Override
@@ -176,7 +163,7 @@ public final class CardBig extends Card {
          try {
             getRuntime().exec(soundCmd);
          } catch (IOException e) {
-            LOG.error("Could not play sound: " + e);
+            LOGGER.error("Could not play sound: " + e);
          }
       });
    }

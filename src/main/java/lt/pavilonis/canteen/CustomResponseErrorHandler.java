@@ -1,4 +1,4 @@
-package lt.pavilonis.scan.monpikas.client;
+package lt.pavilonis.canteen;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
@@ -7,6 +7,7 @@ import org.springframework.web.client.DefaultResponseErrorHandler;
 import java.io.IOException;
 
 public class CustomResponseErrorHandler extends DefaultResponseErrorHandler {
+
    @Override
    public void handleError(ClientHttpResponse response) throws IOException {
       // check for expected status codes

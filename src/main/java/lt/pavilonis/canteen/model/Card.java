@@ -1,4 +1,4 @@
-package lt.pavilonis.scan.monpikas.client.model;
+package lt.pavilonis.canteen.model;
 
 import com.google.common.io.BaseEncoding;
 import javafx.application.Platform;
@@ -14,38 +14,26 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
-import lt.pavilonis.scan.monpikas.client.dto.User;
-import lt.pavilonis.scan.monpikas.client.enumeration.PupilType;
-import org.apache.commons.lang3.StringUtils;
+import lt.pavilonis.canteen.Spring;
+import lt.pavilonis.canteen.dto.User;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import static javafx.scene.paint.Color.BLUE;
 import static javafx.scene.paint.Color.GREEN;
 import static javafx.scene.paint.Color.RED;
-import static org.slf4j.LoggerFactory.getLogger;
 
 public abstract class Card extends Group {
 
-   private static final Logger LOG = getLogger(Card.class.getSimpleName());
-
-   protected ResponseEntity<User> response;
-
-   @Value("${card.icon.noPhotoContent}")
-   protected String iconNoPhotoContentPath;
-
-   @Value("${card.message.noPermission}")
-   private String noPermissionMessage;
-
-   @Value("${card.message.alreadyHadDinner}")
-   private String alreadyHadMealMessage;
-
-   @Value("${card.displayPhotos}")
-   private boolean displayPhotos;
+   private static final Logger LOGGER = LoggerFactory.getLogger(Card.class);
+   private final String iconNoPhotoContentPath = Spring.getStringProperty("card.icon.noPhotoContent");
+   private final String noPermissionMessage = Spring.getStringProperty("card.message.noPermission");
+   private final String alreadyHadMealMessage = Spring.getStringProperty("card.message.alreadyHadDinner");
+   private final boolean displayPhotos = Boolean.parseBoolean(Spring.getStringProperty("card.displayPhotos"));
 
    protected final FlowPane photoContainer = new FlowPane();
    protected final SVGPath iconNoPhoto = new SVGPath();
@@ -55,6 +43,8 @@ public abstract class Card extends Group {
    protected final Text gradeText = new Text();
    protected final GridPane grid = new GridPane();
    protected final ImageView imageView = new ImageView();
+
+   protected ResponseEntity<User> response;
 
    public void initialize() {
       setVisible(false);
@@ -78,13 +68,13 @@ public abstract class Card extends Group {
       innerRect.setStroke(Color.BLACK);
    }
 
-   protected void update() {
+   public void update() {
       User dto = response.getBody();
 
       switch (response.getStatusCode()) {
 
          case ACCEPTED:
-            decorate(dto.getName(), dto.getType() == PupilType.SOCIAL ? GREEN : BLUE, dto.getEating());
+            decorate(dto.getName(), GREEN, dto.getEating());
             log("Pupil " + dto.getName() + " is getting his meal");
             break;
 
@@ -115,12 +105,12 @@ public abstract class Card extends Group {
 
          case INTERNAL_SERVER_ERROR:
             decorate("Serverio klaida", RED, "");
-            LOG.error("Server error");
+            LOGGER.error("Server error");
             break;
 
          default:
             decorate("Nežinoma klaida", RED, "");
-            LOG.error("Unknown error");
+            LOGGER.error("Unknown error");
       }
    }
 
@@ -166,7 +156,7 @@ public abstract class Card extends Group {
 
       String base16image = response.getBody().getBase16photo();
 
-      return StringUtils.isNotBlank(base16image) && BaseEncoding.base16().canDecode(base16image)
+      return StringUtils.hasText(base16image) && BaseEncoding.base16().canDecode(base16image)
             ? extractImageFromString(base16image)
             : null;
    }

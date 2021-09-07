@@ -1,4 +1,4 @@
-package lt.pavilonis.scan.monpikas.client.model;
+package lt.pavilonis.canteen.model;
 
 import javafx.application.Platform;
 import javafx.geometry.HPos;
@@ -7,14 +7,14 @@ import javafx.geometry.VPos;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.text.Font;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
-@Scope(value = "prototype")
-@Component
 public final class CardSmall extends Card {
 
-   Card next;
+   private final Card nextCard;
+
+   public CardSmall(Card nextCard) {
+      this.nextCard = nextCard;
+   }
 
    @Override
    public void initialize() {
@@ -64,10 +64,6 @@ public final class CardSmall extends Card {
             ensureVisible();
          });
       }
-      next.update();
-   }
-
-   public void setNext(Card next) {
-      this.next = next;
+      nextCard.update();
    }
 }
