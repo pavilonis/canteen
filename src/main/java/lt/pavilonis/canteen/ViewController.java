@@ -55,16 +55,14 @@ final class ViewController {
       LOGGER.info("Requesting user with cardCode: " + cardCode);
 
       try {
-         responses.add(
-               userRequestService.requestUser(cardCode)
-         );
+         responses.add(userRequestService.requestUser(cardCode));
+
       } catch (ResourceAccessException e) {
-         LOGGER.error("no connection to server: " + e);
-         responses.add(
-               new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE)
-         );
+         LOGGER.error("no connection to server", e);
+         responses.add(new ResponseEntity<>(HttpStatus.SERVICE_UNAVAILABLE));
+
       } catch (HttpStatusCodeException e) {
-         LOGGER.error("Unknown error: " + e);
+         LOGGER.error("Unknown error", e);
       }
 
       int i = 0;

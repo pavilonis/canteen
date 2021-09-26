@@ -24,17 +24,9 @@ import org.springframework.util.StringUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import static javafx.scene.paint.Color.GREEN;
-import static javafx.scene.paint.Color.RED;
-
 public abstract class Card extends Group {
 
    private static final Logger LOGGER = LoggerFactory.getLogger(Card.class);
-   private final String iconNoPhotoContentPath = Spring.getStringProperty("card.icon.noPhotoContent");
-   private final String noPermissionMessage = Spring.getStringProperty("card.message.noPermission");
-   private final String alreadyHadMealMessage = Spring.getStringProperty("card.message.alreadyHadDinner");
-   private final boolean displayPhotos = Boolean.parseBoolean(Spring.getStringProperty("card.displayPhotos"));
-
    protected final FlowPane photoContainer = new FlowPane();
    protected final SVGPath iconNoPhoto = new SVGPath();
    protected final Rectangle outerRect = new Rectangle();
@@ -50,7 +42,7 @@ public abstract class Card extends Group {
       setVisible(false);
       photoContainer.setAlignment(Pos.CENTER);
 
-      iconNoPhoto.setContent(iconNoPhotoContentPath);
+      iconNoPhoto.setContent(Spring.getStringProperty("card.icon.noPhotoContent"));
       iconNoPhoto.setStroke(Color.DARKGREY);
       iconNoPhoto.setFill(Color.LIGHTGRAY);
 
@@ -74,42 +66,43 @@ public abstract class Card extends Group {
       switch (response.getStatusCode()) {
 
          case ACCEPTED:
-            decorate(dto.getName(), GREEN, dto.getEating());
+            decorate(dto.getName(), Color.GREEN, dto.getEating());
             log("Pupil " + dto.getName() + " is getting his meal");
             break;
 
          case ALREADY_REPORTED:
-            decorate(dto.getName(), RED, alreadyHadMealMessage);
+            decorate(dto.getName(), Color.RED, Spring.getStringProperty("card.message.alreadyHadDinner"));
             log("Pupil " + dto.getName() + " already had hist meal");
             break;
 
          case FORBIDDEN:
-            decorate(dto.getName(), RED, noPermissionMessage);
+            decorate(dto.getName(), Color.RED, Spring.getStringProperty("card.message.noPermission"));
             log("Pupil " + dto.getName() + " has no permission");
             break;
 
          case NOT_FOUND:
-            decorate("Nežinomas mokinys", RED, "");
+            //TODO move to translations
+            decorate("Nežinomas mokinys", Color.RED, "");
             log("Pupil not found: ");
             break;
 
          case SERVICE_UNAVAILABLE:
             log("Server not found");
-            decorate("Serveris nerastas", RED, "");
+            decorate("Serveris nerastas", Color.RED, "");
             break;
 
          case MULTIPLE_CHOICES:
             log("Eating time mismatch");
-            decorate("Netinkamas laikas", RED, "");
+            decorate("Netinkamas laikas", Color.RED, "");
             break;
 
          case INTERNAL_SERVER_ERROR:
-            decorate("Serverio klaida", RED, "");
+            decorate("Serverio klaida", Color.RED, "");
             LOGGER.error("Server error");
             break;
 
          default:
-            decorate("Nežinoma klaida", RED, "");
+            decorate("Nežinoma klaida", Color.RED, "");
             LOGGER.error("Unknown error");
       }
    }
@@ -150,7 +143,9 @@ public abstract class Card extends Group {
 
    private Image getImage() {
 
-      if (!displayPhotos || response == null || response.getBody() == null) {
+      if (!Boolean.parseBoolean(Spring.getStringProperty("card.displayPhotos"))
+            || response == null
+            || response.getBody() == null) {
          return null;
       }
 
@@ -162,6 +157,7 @@ public abstract class Card extends Group {
    }
 
    private Image extractImageFromString(String base16image) {
+      //TODO change to base64
       byte[] imageBytes = BaseEncoding.base16().decode(base16image);
 
       try (ByteArrayInputStream input = new ByteArrayInputStream(imageBytes)) {

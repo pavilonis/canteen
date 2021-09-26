@@ -1,11 +1,13 @@
 package lt.pavilonis.canteen.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lt.pavilonis.canteen.EatingType;
 
 import java.text.DecimalFormat;
 import java.util.Map;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public final class Eating {
 
    //TODO Move out
@@ -17,18 +19,12 @@ public final class Eating {
          EatingType.SUPPER, "Naktipiečiai"
    );
 
-   private final Long id;
-   private final String name;
    private final EatingType type;
    private final double price;
 
-   public Eating(@JsonProperty("id") Long id,
-                 @JsonProperty("name") String name,
-                 @JsonProperty("type") EatingType type,
+   public Eating(@JsonProperty("type") EatingType type,
                  @JsonProperty("price") double price) {
 
-      this.id = id;
-      this.name = name;
       this.type = type;
       this.price = price;
    }
